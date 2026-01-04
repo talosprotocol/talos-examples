@@ -12,7 +12,7 @@ Documentation describes *what* components do; examples show *how* to use them. `
 
 ```mermaid
 graph TD
-    subgraph "Example: DevOps Agent"
+    subgraph DevOps_Agent[Example: DevOps Agent]
         Agent -->|Checks| Github
         Agent -->|Deploys| AWS
         Agent -->|Secured By| Talos[Talos SDK]

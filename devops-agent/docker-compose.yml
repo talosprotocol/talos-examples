@@ -4,8 +4,8 @@ services:
   # ============================================================================
   talos-node:
     build:
-      context: ../../../.. # Root of repo
-      dockerfile: deploy/repos/talos-examples/devops-agent/Dockerfile.talos
+      context: .
+      dockerfile: Dockerfile.talos
     profiles: ["aws", "oss"]
     environment:
       - TALOS_MODE=gateway
@@ -17,9 +17,27 @@ services:
       - llm-net
       - control-plane
     ports:
-      - "8000:8000" # Expose Gateway for debug (optional)
+      - "0.0.0.0:8000:8000" # Expose Gateway for debug
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # ============================================================================
+  # AUDIT PLANE
+  # ============================================================================
+  talos-audit-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.audit
+    profiles: ["aws", "oss"]
+    ports:
+      - "0.0.0.0:8081:8081"
+    networks:
+      - control-plane
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
       interval: 5s
       timeout: 3s
       retries: 5
@@ -29,8 +47,8 @@ services:
   # ============================================================================
   devops-agent:
     build:
-      context: ../../../..
-      dockerfile: deploy/repos/talos-examples/devops-agent/Dockerfile.agent
+      context: .
+      dockerfile: Dockerfile.agent
     profiles: ["aws", "oss"]
     environment:
       - TALOS_GATEWAY_URL=http://talos-node:8000
@@ -73,9 +91,11 @@ services:
   # ============================================================================
   mcp-tools:
     build:
-      context: ../../../..
-      dockerfile: deploy/repos/talos-examples/devops-agent/Dockerfile.tools
+      context: .
+      dockerfile: Dockerfile.tools
     profiles: ["aws", "oss"]
+    ports:
+      - "0.0.0.0:8082:8000"
     environment:
       # Track detection
       - CLOUD_PROVIDER=${CLOUD_PROVIDER:-aws}

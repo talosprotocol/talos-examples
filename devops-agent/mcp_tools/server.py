@@ -32,6 +32,10 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+@app.get("/health")
+async def health():
+    return {"status": "ok", "provider": CLOUD_PROVIDER}
+
 @app.post("/mcp")
 async def handle_mcp_call(request: Request):
     """
@@ -39,7 +43,7 @@ async def handle_mcp_call(request: Request):
     """
     body = await request.json()
     # Simple JSON-RPC dispatch
-    method = body.get("method")
+    # method = body.get("method") # Unused
     params = body.get("params", {})
     
     request_id = body.get("id")

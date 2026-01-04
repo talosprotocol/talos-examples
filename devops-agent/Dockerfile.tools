@@ -7,11 +7,11 @@ WORKDIR /app
 RUN pip install --no-cache-dir boto3 fastapi uvicorn requests httpx
 
 # install local SDK
-COPY deploy/repos/talos-sdk-py /tmp/talos-sdk-py
-RUN pip install /tmp/talos-sdk-py
-
-# Copy the mcp_tools package
-COPY deploy/repos/talos-examples/devops-agent/mcp_tools/ /app/mcp_tools/
+# install local SDK
+# install local SDK
+# install local SDK
+COPY . /app
+RUN pip install /app/vendor/talos-sdk-py
 
 ENV PYTHONPATH=/app
 

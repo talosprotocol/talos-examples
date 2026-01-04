@@ -4,7 +4,7 @@ services:
   # ============================================================================
   talos-node:
     build:
-      context: ../../../..  # Root of repo
+      context: ../../../.. # Root of repo
       dockerfile: deploy/repos/talos-examples/devops-agent/Dockerfile.talos
     profiles: ["aws", "oss"]
     environment:
@@ -17,7 +17,7 @@ services:
       - llm-net
       - control-plane
     ports:
-      - "8000:8000"  # Expose Gateway for debug (optional)
+      - "8000:8000" # Expose Gateway for debug (optional)
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 5s
@@ -28,9 +28,9 @@ services:
   # AGENT PLANE (Private Network)
   # ============================================================================
   devops-agent:
-    build: 
-      context: .
-      dockerfile: Dockerfile.agent
+    build:
+      context: ../../../..
+      dockerfile: deploy/repos/talos-examples/devops-agent/Dockerfile.agent
     profiles: ["aws", "oss"]
     environment:
       - TALOS_GATEWAY_URL=http://talos-node:8000
@@ -73,8 +73,8 @@ services:
   # ============================================================================
   mcp-tools:
     build:
-      context: .
-      dockerfile: Dockerfile.tools
+      context: ../../../..
+      dockerfile: deploy/repos/talos-examples/devops-agent/Dockerfile.tools
     profiles: ["aws", "oss"]
     environment:
       # Track detection

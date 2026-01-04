@@ -1,0 +1,7 @@
+# Standard ignore
+__pycache__
+*.pyc
+.git
+.venv
+venv
+.DS_Store

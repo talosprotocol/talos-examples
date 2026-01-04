@@ -42,3 +42,6 @@ reports/
 devops-agent/vendor/
 15_standalone_check.py
 *.log
+conformance.xml
+junit.xml
+.DS_Store

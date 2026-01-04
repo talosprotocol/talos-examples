@@ -5,14 +5,12 @@ cd "$(dirname "$0")/.."
 echo "Validating examples..."
 
 # Validate docker compose files if present
-shopt -s globstar nullglob
-for f in **/docker-compose.yml **/docker-compose.yaml; do
+find . -maxdepth 3 \( -name "docker-compose.yml" -o -name "docker-compose.yaml" \) | while read -r f; do
   echo "  Validating $(dirname "$f")/..."
   (cd "$(dirname "$f")" && docker compose config >/dev/null 2>&1) || {
     echo "    ⚠ Docker compose validation failed (docker may not be available)"
   }
 done
-shopt -u globstar nullglob
 
 # Validate executable scripts have proper shebang
 for script in devops-agent/scripts/*.sh multi-agent/scripts/*.sh; do

@@ -126,7 +126,6 @@ services:
       retries: 5
 
   openfaas:
-    image: openfaas/faas-netes:latest # Mocking for simplicity or use faasd
     # For a true Docker Compose setup, we would need the faas-swarm or faasd setup.
     # For this example, we will assume a simplifed mock or compatible container.
     # Using a placeholder for strict plan compliance or we can use `fission` as suggested.

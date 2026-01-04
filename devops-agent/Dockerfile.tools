@@ -1,0 +1,15 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Simple direct install for dependencies to avoid complex requirements files
+# we need boto3, fastapi, uvicorn, requests
+RUN pip install --no-cache-dir boto3 fastapi uvicorn requests httpx
+
+# Copy the mcp_tools package
+# Context is . (devops-agent directory)
+COPY mcp_tools/ /app/mcp_tools/
+
+ENV PYTHONPATH=/app
+
+CMD ["uvicorn", "mcp_tools.server:app", "--host", "0.0.0.0", "--port", "8000"]

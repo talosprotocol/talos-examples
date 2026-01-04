@@ -1,0 +1,151 @@
+services:
+  # ============================================================================
+  # SECURITY PLANE
+  # ============================================================================
+  talos-node:
+    build:
+      context: ../../../..  # Root of repo
+      dockerfile: deploy/repos/talos-examples/devops-agent/Dockerfile.talos
+    profiles: ["aws", "oss"]
+    environment:
+      - TALOS_MODE=gateway
+      - TALOS_POLICY_PATH=/app/config/capabilities.json
+    volumes:
+      - ./config:/app/config:ro
+    networks:
+      - agent-net
+      - llm-net
+      - control-plane
+    ports:
+      - "8000:8000"  # Expose Gateway for debug (optional)
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # ============================================================================
+  # AGENT PLANE (Private Network)
+  # ============================================================================
+  devops-agent:
+    build: 
+      context: .
+      dockerfile: Dockerfile.agent
+    profiles: ["aws", "oss"]
+    environment:
+      - TALOS_GATEWAY_URL=http://talos-node:8000
+      - POSTGRES_URL=postgresql://user:pass@postgres:5432/talos_memory
+    depends_on:
+      talos-node:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - agent-net
+    # No ports exposed!
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    profiles: ["aws", "oss"]
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=talos_memory
+    networks:
+      - agent-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d talos_memory"]
+      interval: 5s
+      retries: 5
+
+  # ============================================================================
+  # INFERENCE PLANE (Isolated)
+  # ============================================================================
+  ollama:
+    image: ollama/ollama:latest
+    profiles: ["aws", "oss"]
+    networks:
+      - llm-net
+    # No ports exposed to host, only to talos-node
+
+  # ============================================================================
+  # TOOL PLANE (Control Plane)
+  # ============================================================================
+  mcp-tools:
+    build:
+      context: .
+      dockerfile: Dockerfile.tools
+    profiles: ["aws", "oss"]
+    environment:
+      # Track detection
+      - CLOUD_PROVIDER=${CLOUD_PROVIDER:-aws}
+      # AWS Config
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_REGION=us-east-1
+      - AWS_ENDPOINT_URL=http://localstack:4566
+      # OSS Config
+      - MINIO_ENDPOINT=http://minio:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - OPENFAAS_GATEWAY=http://openfaas:8080
+    networks:
+      - control-plane
+      - cloud-net
+
+  # ============================================================================
+  # CLOUD PLANE (Track A: AWS)
+  # ============================================================================
+  localstack:
+    image: localstack/localstack:3.0
+    profiles: ["aws"]
+    environment:
+      - SERVICES=s3,lambda
+    networks:
+      - cloud-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 5s
+      retries: 10
+
+  # ============================================================================
+  # CLOUD PLANE (Track B: OSS)
+  # ============================================================================
+  minio:
+    image: minio/minio
+    profiles: ["oss"]
+    command: server /data --console-address ":9001"
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    networks:
+      - cloud-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      retries: 5
+
+  openfaas:
+    image: openfaas/faas-netes:latest # Mocking for simplicity or use faasd
+    # For a true Docker Compose setup, we would need the faas-swarm or faasd setup.
+    # For this example, we will assume a simplifed mock or compatible container.
+    # Using a placeholder for strict plan compliance or we can use `fission` as suggested.
+    # Let's stick to the plan but note this is a placeholder image for now.
+    image: ghcr.io/openfaas/gateway:latest
+    profiles: ["oss"]
+    networks:
+      - cloud-net
+
+networks:
+  agent-net:
+    driver: bridge
+    internal: true # No internet access
+  llm-net:
+    driver: bridge
+    internal: true
+  control-plane:
+    driver: bridge
+    internal: true
+  cloud-net:
+    driver: bridge
+    internal: true

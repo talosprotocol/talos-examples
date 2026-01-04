@@ -1,0 +1,22 @@
+{
+    "capabilities": {
+        "allow": [
+            "aws:s3:create_bucket",
+            "aws:lambda:create_function",
+            "aws:lambda:list_functions",
+            "oss:minio:create_bucket",
+            "oss:faas:deploy",
+            "oss:faas:list"
+        ],
+        "deny": [
+            "aws:s3:delete_bucket",
+            "oss:minio:delete_bucket"
+        ],
+        "system": [
+            "sys:agent:disconnect"
+        ]
+    },
+    "policy": {
+        "default_action": "deny"
+    }
+}

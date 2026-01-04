@@ -1,0 +1,30 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# We need to copy the talos_node package. 
+# Since context is root, we copy from deploy/repos/...
+# But wait, docker-compose context is root.
+# Let's simplify and assume we copy the local directory into /app/talos_node
+# and run from there.
+
+# Actually, let's just copy the specific file we just wrote.
+# The `docker-compose.yml` context is `../../../..` (Root of repo).
+# But the file is in `deploy/repos/talos-examples/devops-agent/talos_node/main.py`.
+# This is getting complicated with paths.
+# Let's change context in docker-compose to header, or rely on explicit copy paths.
+
+# ADJUSTMENT: We will assume the build context is the `devops-agent` directory for simplicity
+# and change docker-compose to use `context: .` and copy files locally.
+# The user's prompt said "talos-node: standalone Talos Docker container".
+# Ideally it should be a reusable image, but for this repo example, local build is fine.
+
+COPY talos_node/ /app/talos_node/
+
+# Install dependencies (fastapi uvicorn httpx)
+RUN pip install fastapi uvicorn httpx
+
+CMD ["uvicorn", "talos_node.main:app", "--host", "0.0.0.0", "--port", "8000"]

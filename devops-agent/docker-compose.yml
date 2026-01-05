@@ -68,7 +68,7 @@ services:
     volumes:
       - ./ui/index.html:/usr/share/nginx/html/index.html:ro
     ports:
-      - "3000:80"
+      - "3002:80"
     networks:
       - agent-net
 

@@ -17,7 +17,7 @@ services:
       - llm-net
       - control-plane
     ports:
-      - "0.0.0.0:8000:8000" # Expose Gateway for debug
+      - "8000:8000" # Expose Gateway for debug
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 5s
@@ -71,6 +71,7 @@ services:
       - "3002:80"
     networks:
       - agent-net
+      - public_net
 
   postgres:
     image: pgvector/pgvector:pg16
@@ -178,3 +179,5 @@ networks:
   cloud-net:
     driver: bridge
     internal: true
+  public_net:
+    driver: bridge

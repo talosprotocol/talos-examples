@@ -4,56 +4,343 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Talos DevOps Reference (Legacy)</title>
+    <title>Talos DevOps | Simulation Mode</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600&display=swap"
+        rel="stylesheet">
     <style>
-        body {
-            font-family: sans-serif;
-            background: #111;
-            color: #eee;
-            padding: 2rem;
+        :root {
+            --bg: #0d1117;
+            --card-bg: #161b22;
+            --border: #30363d;
+            --text-primary: #c9d1d9;
+            --text-secondary: #8b949e;
+            --accent: #58a6ff;
+            --success: #238636;
+            --error: #da3633;
+            --font-mono: 'JetBrains Mono', monospace;
+            --font-sans: 'Inter', sans-serif;
         }
 
-        .card {
-            background: #222;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            border: 1px solid #333;
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-sans);
+            background: var(--bg);
+            color: var(--text-primary);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         h1 {
-            color: #888;
+            font-size: 1.2rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .warning {
-            color: #f90;
+        .badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 99px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge.demo {
+            background: #1f6feb;
+            color: #fff;
+        }
+
+        .container {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 1px;
+            background: var(--border);
+            overflow: hidden;
+        }
+
+        aside {
+            background: var(--bg);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .control-panel h3 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        button {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            text-align: left;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+        }
+
+        button:hover {
+            border-color: var(--text-secondary);
+            background: #21262d;
+        }
+
+        button.active {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        main {
+            background: #000;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            font-family: var(--font-mono);
+            overflow: hidden;
+        }
+
+        .terminal {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding-bottom: 2rem;
+        }
+
+        .log-entry {
+            display: flex;
+            gap: 1rem;
+            opacity: 0;
+            animation: fadeIn 0.3s forwards;
+        }
+
+        .log-entry.info {
+            color: var(--text-primary);
+        }
+
+        .log-entry.warn {
+            color: #d29922;
+        }
+
+        .log-entry.error {
+            color: var(--error);
+        }
+
+        .log-entry.success {
+            color: #3fb950;
+        }
+
+        .timestamp {
+            color: var(--text-secondary);
+            min-width: 100px;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .status-bar {
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid #333;
+            display: flex;
+            gap: 2rem;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .metric {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .metric span {
+            font-size: 1.1rem;
+            color: var(--text-primary);
             font-weight: bold;
-        }
-
-        code {
-            background: #333;
-            padding: 0.2rem 0.4rem;
-            border-radius: 4px;
         }
     </style>
 </head>
 
 <body>
-    <h1>Talos DevOps Reference (Legacy)</h1>
+    <header>
+        <h1>
+            <span>🛡️ Talos DevOps Agent</span>
+            <span class="badge demo">Simulation Mode</span>
+        </h1>
+        <div style="font-size: 0.9rem; color: var(--text-secondary);">
+            Running locally on port 3002
+        </div>
+    </header>
 
-    <div class="card">
-        <h2>⚠️ Reference Implementation</h2>
-        <p>This is the legacy reference example. It runs as a background CLI process.</p>
-        <p>For the full interactive experience with live logs and controls, please use the <strong>New DevOps
-                Agent</strong> (talos-aiops).</p>
+    <div class="container">
+        <aside>
+            <div class="control-panel">
+                <h3>Quick Actions</h3>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <button onclick="runScenario('security')">
+                        🔒 Scan Security
+                    </button>
+                    <button onclick="runScenario('optimize')">
+                        ⚡ Optimize Performance
+                    </button>
+                    <button onclick="runScenario('audit')">
+                        📋 Generate Audit Report
+                    </button>
+                </div>
+            </div>
+
+            <div class="control-panel">
+                <h3>System Status</h3>
+                <div
+                    style="background: var(--card-bg); padding: 1rem; border-radius: 6px; border: 1px solid var(--border);">
+                    <div style="margin-bottom: 0.5rem; display: flex; justify-content: space-between;">
+                        <span>CPU Load</span>
+                        <span id="cpu">12%</span>
+                    </div>
+                    <div style="height: 4px; background: #333; border-radius: 2px; overflow: hidden;">
+                        <div id="cpu-bar"
+                            style="width: 12%; height: 100%; background: var(--accent); transition: width 1s;"></div>
+                    </div>
+
+                    <div
+                        style="margin-top: 1rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between;">
+                        <span>Memory</span>
+                        <span id="mem">450MB</span>
+                    </div>
+                    <div style="height: 4px; background: #333; border-radius: 2px; overflow: hidden;">
+                        <div id="mem-bar"
+                            style="width: 30%; height: 100%; background: var(--success); transition: width 1s;"></div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main>
+            <div class="terminal" id="terminal">
+                <div class="log-entry info">
+                    <span class="timestamp">INITIALIZE</span>
+                    <span>Talos Agent Kernel initialized successfully.</span>
+                </div>
+                <div class="log-entry info">
+                    <span class="timestamp">NETWORK</span>
+                    <span>Connected to secure enclave (agent-net).</span>
+                </div>
+                <div class="log-entry success">
+                    <span class="timestamp">READY</span>
+                    <span>Waiting for operator command...</span>
+                </div>
+            </div>
+
+            <div class="status-bar">
+                <div class="metric">
+                    Last Scan
+                    <span>Now</span>
+                </div>
+                <div class="metric">
+                    Threats Blocked
+                    <span id="threats">0</span>
+                </div>
+                <div class="metric">
+                    Uptime
+                    <span>99.99%</span>
+                </div>
+            </div>
+        </main>
     </div>
 
-    <div class="card">
-        <h2>Status</h2>
-        <p>Agent Container: <span style="color: #0f0">Active</span></p>
-        <p>Mode: <code>Headless / CLI</code></p>
-        <p>To view logs: <code>docker compose logs -f devops-agent</code></p>
-    </div>
+    <script>
+        const terminal = document.getElementById('terminal');
+        let threatCount = 0;
+
+        function log(msg, type = 'info') {
+            const date = new Date().toISOString().split('T')[1].slice(0, 8);
+            const div = document.createElement('div');
+            div.className = `log-entry ${type}`;
+            div.innerHTML = `
+                <span class="timestamp">[${date}]</span>
+                <span>${msg}</span>
+            `;
+            terminal.appendChild(div);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        async function sleep(ms) {
+            return new Promise(r => setTimeout(r, ms));
+        }
+
+        async function runScenario(type) {
+            log(`Starting ${type} scenario...`, 'info');
+
+            if (type === 'security') {
+                await sleep(800);
+                log('Initiating deep packet inspection...', 'info');
+                await sleep(1200);
+                log('Scanning container registry for CVEs...', 'info');
+                await sleep(1500);
+                log('⚠️  Suspicious pattern detected in /api/v1/auth', 'warn');
+                await sleep(1000);
+                log('Isolating affected microservice...', 'warn');
+                await sleep(1000);
+                log('Patching vulnerability CVE-2025-9921...', 'success');
+                threatCount++;
+                document.getElementById('threats').textContent = threatCount;
+                await sleep(800);
+                log('Security perimeter re-established. All systems green.', 'success');
+            } else if (type === 'optimize') {
+                log('Analyzing resource usage...', 'info');
+                await sleep(1000);
+                log('Detected memory leak in worker-pool-2', 'warn');
+                await sleep(1500);
+                log('Rebalancing load across availablity zones...', 'info');
+                await sleep(1000);
+                log('Optimization complete. Throughput increased by 24%.', 'success');
+            } else {
+                log('Compiling audit trail...', 'info');
+                await sleep(500);
+                log('Verifying Merkle root hashes...', 'info');
+                await sleep(800);
+                log('Exporting immutable ledger to Audit Plane...', 'success');
+            }
+        }
+
+        // Simulate Metrics
+        setInterval(() => {
+            const cpu = Math.floor(Math.random() * 30 + 10);
+            const mem = Math.floor(Math.random() * 200 + 300);
+            document.getElementById('cpu').textContent = cpu + '%';
+            document.getElementById('cpu-bar').style.width = cpu + '%';
+            document.getElementById('mem').textContent = mem + 'MB';
+        }, 2000);
+    </script>
 </body>
 
 </html>

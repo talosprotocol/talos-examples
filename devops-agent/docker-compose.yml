@@ -61,6 +61,16 @@ services:
     networks:
       - agent-net
     # No ports exposed!
+    
+  ui:
+    image: nginx:alpine
+    profiles: ["aws", "oss"]
+    volumes:
+      - ./ui/index.html:/usr/share/nginx/html/index.html:ro
+    ports:
+      - "3000:80"
+    networks:
+      - agent-net
 
   postgres:
     image: pgvector/pgvector:pg16

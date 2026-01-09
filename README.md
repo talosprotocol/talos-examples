@@ -43,3 +43,9 @@ cd devops-agent && ./scripts/demo.sh
 ## References
 1.  [Talos SDK Python](../talos-sdk-py/README.md)
 2.  [Talos Docs](../talos-docs/README.md)
+
+## License
+
+Licensed under the Apache License 2.0. See [LICENSE](LICENSE).
+
+Licensed under the Apache License 2.0. See [LICENSE](LICENSE).

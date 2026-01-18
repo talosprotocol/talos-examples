@@ -62,9 +62,9 @@ def main():
     
     # Add contacts
     contacts = [
-        NodeInfo(generate_node_id(), "192.168.1.1", 8000),
-        NodeInfo(generate_node_id(), "192.168.1.2", 8000),
-        NodeInfo(generate_node_id(), "192.168.1.3", 8000),
+        NodeInfo(node_id=generate_node_id(), host="192.168.1.1", port=8000),
+        NodeInfo(node_id=generate_node_id(), host="192.168.1.2", port=8000),
+        NodeInfo(node_id=generate_node_id(), host="192.168.1.3", port=8000),
     ]
     
     for contact in contacts:
@@ -123,8 +123,8 @@ def main():
         
         # Bootstrap
         bootstrap_nodes = [
-            NodeInfo(generate_node_id(), "10.0.0.1", 8000),
-            NodeInfo(generate_node_id(), "10.0.0.2", 8000),
+            NodeInfo(node_id=generate_node_id(), host="10.0.0.1", port=8000),
+            NodeInfo(node_id=generate_node_id(), host="10.0.0.2", port=8000),
         ]
         added = await node.bootstrap(bootstrap_nodes)
         print(f"  Bootstrapped: {added} nodes")

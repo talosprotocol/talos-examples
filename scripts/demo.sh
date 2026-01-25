@@ -27,7 +27,7 @@ prepare() {
     mkdir -p "$vendor_dir"
     
     # Python SDK
-    local py_sdk="$REPO_ROOT/deploy/repos/talos-sdk-py"
+    local py_sdk="$REPO_ROOT/sdks/python"
     if [ -d "$py_sdk" ]; then
         log "Staging talos-sdk-py..."
         rsync -av --exclude 'venv' --exclude '__pycache__' --exclude '.git' \
@@ -38,7 +38,7 @@ prepare() {
     fi
 
     # Audit Service
-    local audit_svc="$REPO_ROOT/deploy/repos/talos-audit-service"
+    local audit_svc="$REPO_ROOT/services/audit"
     if [ -d "$audit_svc" ]; then
         log "Staging talos-audit-service..."
         rsync -av --exclude 'venv' --exclude '__pycache__' --exclude '.git' \

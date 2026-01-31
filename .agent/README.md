@@ -1,4 +1,5 @@
 # Agent workspace: examples
+> **Project**: examples
 
 This folder contains agent-facing context, tasks, workflows, and planning artifacts for this submodule.
 

@@ -21,7 +21,9 @@ def health():
 CHECKOUT_SESSIONS: Dict[str, Dict[str, Any]] = {}
 
 # --- SECURITY CONFIG ---
-PLATFORM_PUBLIC_KEY_PEM = """[REDACTED_BY_POLICY]"""
+PLATFORM_PUBLIC_KEY_PEM = os.getenv("TALOS_PLATFORM_PUBLIC_KEY", "")
+if not PLATFORM_PUBLIC_KEY_PEM:
+    print("WARNING: TALOS_PLATFORM_PUBLIC_KEY not set. Signature verification will fail.")
 
 # --- HELPERS ---
 def base64url_decode(s: str) -> bytes:

@@ -12,6 +12,7 @@ Copy-paste ready!
 """
 
 import asyncio
+import pytest
 from src.network.dht import (
     DHTNode,
     DHTStorage,
@@ -21,6 +22,7 @@ from src.network.dht import (
     generate_node_id,
     xor_distance,
 )
+from src.core.did import DIDManager, publish_did, resolve_did
 
 
 def main():
@@ -132,29 +134,58 @@ def main():
     asyncio.run(async_demo())
     
     # ========================================
-    # 7. DID Resolution
+    # 7. DID Resolution (High-level API)
     # ========================================
-    print("\n[7] DID Resolution...")
+    print("\n[7] DID Resolution (High-level API)...")
     
     async def did_demo():
         resolver = DIDResolver(node)
         
-        # Publish DID document
-        did = "did:talos:" + "a" * 32
-        doc = {"id": did, "verificationMethod": []}
+        # Create DID document via manager
+        class MockKey:
+            public_key = b"0" * 32
+            def sign(self, msg): return b"sig"
         
-        await resolver.publish(did, doc)
-        print(f"  Published: {did[:30]}...")
+        manager = DIDManager(MockKey())
         
-        # Resolve
-        resolved = await resolver.resolve(did)
-        print(f"  Resolved: {resolved is not None}")
+        # Publish using manager high-level API
+        success = await manager.publish(resolver)
+        print(f"  Published via Manager: {success}")
+        
+        # Resolve using global function
+        resolved = await resolve_did(manager.did, resolver)
+        print(f"  Resolved via API: {resolved is not None}")
+        
+        if resolved:
+            print(f"  Resolved ID: {resolved['id']}")
     
     asyncio.run(did_demo())
     
     print("\n" + "=" * 50)
     print("Example 6 Complete!")
     print("=" * 50)
+
+
+@pytest.mark.asyncio
+async def test_dht_resolution():
+    """Test DHT-based DID resolution using the core API."""
+    node = DHTNode(host="127.0.0.1", port=0)
+    resolver = DIDResolver(node)
+    
+    class MockKey:
+        public_key = b"0" * 32
+        def sign(self, msg): return b"sig"
+    
+    manager = DIDManager(MockKey())
+    
+    # Store in DHT
+    await manager.publish(resolver)
+    
+    # Resolve
+    doc = await resolve_did(manager.did, resolver)
+    
+    assert doc is not None
+    assert doc["id"] == manager.did
 
 
 if __name__ == "__main__":

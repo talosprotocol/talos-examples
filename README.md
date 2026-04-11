@@ -22,8 +22,8 @@ graph TD
 ## Technical Design
 ### Modules
 - **devops-agent**: CI/CD automation agent.
-- **multi-agent**: Swarm coordination example.
-- **chat**: Simple secure chat application.
+- **secure_chat**: Simple secure chat application.
+- **ucp-merchant**: Unified Commerce Protocol merchant reference implementation.
 
 ## Evaluation
 Evaluation: N/A (Education purpose).
@@ -41,15 +41,9 @@ cd devops-agent && ./scripts/demo.sh
 *   **Note**: Examples are for educational purposes. Production deployments require managing your own keys.
 
 ## References
-1.  [Talos SDK Python](../talos-sdk-py/README.md)
-2.  [Talos Docs](../talos-docs/README.md)
+1.  [Python SDK](../sdks/python/README.md)
+2.  [Documentation](../docs/README.md)
 
 ## License
-
-Licensed under the Apache License 2.0. See [LICENSE](LICENSE).
-
-Licensed under the Apache License 2.0. See [LICENSE](LICENSE).
-
-Licensed under the Apache License 2.0. See [LICENSE](LICENSE).
 
 Licensed under the Apache License 2.0. See [LICENSE](LICENSE).

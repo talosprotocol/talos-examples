@@ -1,11 +1,11 @@
 import json
 import uuid
 import time
-import base64
 from typing import Dict, Any, Optional, cast
 from fastapi import FastAPI, Request, HTTPException, Depends
 import rfc8785
 import http_sfv
+from talos_contracts import base64url_encode
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives import serialization
@@ -24,11 +24,6 @@ CHECKOUT_SESSIONS: Dict[str, Dict[str, Any]] = {}
 PLATFORM_PUBLIC_KEY_PEM = os.getenv("TALOS_PLATFORM_PUBLIC_KEY", "")
 if not PLATFORM_PUBLIC_KEY_PEM:
     print("WARNING: TALOS_PLATFORM_PUBLIC_KEY not set. Signature verification will fail.")
-
-# --- HELPERS ---
-def base64url_decode(s: str) -> bytes:
-    padding = '=' * (4 - (len(s) % 4))
-    return base64.urlsafe_b64decode(s + padding)
 
 def canonicalize_query(query_params: str) -> str:
     if not query_params: return ""
@@ -104,7 +99,7 @@ async def verify_signature(request: Request):
     sig_b64 = parts[2]
     
     envelope_bytes = rfc8785.dumps(envelope)
-    envelope_b64 = base64.urlsafe_b64encode(envelope_bytes).decode('ascii').rstrip('=')
+    envelope_b64 = base64url_encode(envelope_bytes)
     signing_input = f"{header_b64}.{envelope_b64}".encode('ascii')
 
     print(f"[REFERENCE MERCHANT] Verified signature for {request.method} {request.url.path}")

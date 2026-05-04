@@ -18,7 +18,6 @@ Run:
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
-import asyncio
 from typing import Optional
 
 # Import the main chat app

@@ -22,7 +22,7 @@ from src.network.dht import (
     generate_node_id,
     xor_distance,
 )
-from src.core.did import DIDManager, publish_did, resolve_did
+from src.core.did import DIDManager, resolve_did
 
 
 def main():

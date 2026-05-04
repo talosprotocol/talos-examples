@@ -1,15 +1,10 @@
-import json
 import uuid
 import time
-from typing import Dict, Any, Optional, cast
+from typing import Dict, Any
 from fastapi import FastAPI, Request, HTTPException, Depends
 import rfc8785
 import http_sfv
 from talos_contracts import base64url_encode
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.asymmetric import ec
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric.utils import encode_dss_signature
 
 app = FastAPI(title="UCP Reference Merchant")
 
